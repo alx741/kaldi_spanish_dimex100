@@ -4,9 +4,12 @@ mkdir -p data/train data/test data/local
 
 N_SPEAKERS=100
 N_COMMON_UTTERANCES=10
+N_INDIVIDUAL_UTTERANCES=50
 N_INDIVIDUAL_UTTERANCES_TRAINING=40
 N_INDIVIDUAL_UTTERANCES_TESTING=10
 CORPUS_DIR="$1"
+
+DATA_DIR="../data"
 
 ##################
 # /data/train/text
@@ -16,6 +19,15 @@ CORPUS_DIR="$1"
 # speakerId-utteranceId-[c|i]
 #   c = speaker common utterances (10)
 #   i = speaker individual utterances (50)
+#
+#   e.g.:
+#       s001-01-c
+#       ...
+#       s001-10-c
+#       ...
+#       s001-01-i
+#       ...
+#       s001-50-i
 
 ## 80-20 train-test split
 ## Only individual utterances are used in testing
@@ -23,13 +35,6 @@ CORPUS_DIR="$1"
 #    40/50 individual utterances go into training
 #    10/50 individual utterances go into testing
 
-# s001-01-c
-# ...
-# s001-10-c
-
-# s001-01-i
-# ...
-# s001-50-i
 
 function make_speaker_id
 {
@@ -73,7 +78,7 @@ for i in $(seq 1 $N_SPEAKERS); do
         trans_file="$CORPUS_DIR/$speaker_id/texto/comunes/$speaker_id$utterance_id.txt"
         if [ -f "$trans_file" ]; then
             transcription=$(cat "$trans_file")
-            echo "$text_id $transcription"
+            echo "$text_id $transcription" >> "$DATA_DIR/train/text"
         fi
     done
 
@@ -84,9 +89,26 @@ for i in $(seq 1 $N_SPEAKERS); do
         trans_file="$CORPUS_DIR/$speaker_id/texto/individuales/$speaker_id$utterance_id.txt"
         if [ -f "$trans_file" ]; then
             transcription=$(cat "$trans_file")
-            echo "$text_id $transcription"
+            echo "$text_id $transcription" >> "$DATA_DIR/train/text"
         fi
     done
 
 done
 
+
+### Generate data/test/text
+for i in $(seq 1 $N_SPEAKERS); do
+    speaker_id=$(make_speaker_id $i)
+
+    # Individual utterances
+    for k in $(seq $N_INDIVIDUAL_UTTERANCES_TRAINING $N_INDIVIDUAL_UTTERANCES); do
+        utterance_id=$(make_utterance_id $k)
+        text_id="$speaker_id-$utterance_id-i"
+        trans_file="$CORPUS_DIR/$speaker_id/texto/individuales/$speaker_id$utterance_id.txt"
+        if [ -f "$trans_file" ]; then
+            transcription=$(cat "$trans_file")
+            echo "$text_id $transcription" >> "$DATA_DIR/test/text"
+        fi
+    done
+
+done
