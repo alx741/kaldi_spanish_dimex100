@@ -4,7 +4,9 @@ mkdir -p data/train data/test data/local
 
 N_SPEAKERS=100
 N_COMMON_UTTERANCES=10
-N_INDIVIDUAL_UTTERANCES=50
+N_INDIVIDUAL_UTTERANCES_TRAINING=40
+N_INDIVIDUAL_UTTERANCES_TESTING=10
+CORPUS_DIR="$1"
 
 ##################
 # /data/train/text
@@ -60,7 +62,31 @@ function make_utterance_id
     esac
 }
 
+### Generate data/train/text
 for i in $(seq 1 $N_SPEAKERS); do
     speaker_id=$(make_speaker_id $i)
-    echo "$speaker_id"
+
+    # Common utterances
+    for j in $(seq 1 $N_COMMON_UTTERANCES); do
+        utterance_id=$(make_utterance_id $j)
+        text_id="$speaker_id-$utterance_id-c"
+        trans_file="$CORPUS_DIR/$speaker_id/texto/comunes/$speaker_id$utterance_id.txt"
+        if [ -f "$trans_file" ]; then
+            transcription=$(cat "$trans_file")
+            echo "$text_id $transcription"
+        fi
+    done
+
+    # Individual utterances
+    for k in $(seq 1 $N_INDIVIDUAL_UTTERANCES_TRAINING); do
+        utterance_id=$(make_utterance_id $k)
+        text_id="$speaker_id-$utterance_id-i"
+        trans_file="$CORPUS_DIR/$speaker_id/texto/individuales/$speaker_id$utterance_id.txt"
+        if [ -f "$trans_file" ]; then
+            transcription=$(cat "$trans_file")
+            echo "$text_id $transcription"
+        fi
+    done
+
 done
+
