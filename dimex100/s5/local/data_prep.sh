@@ -53,7 +53,7 @@ function make_speaker_id
     esac
 }
 
-function make_utterance_id
+function make_sentence_id
 {
     index="$1"
     digits="${#index}"
@@ -73,23 +73,23 @@ for i in $(seq 1 $N_SPEAKERS); do
 
     # Common utterances
     for j in $(seq 1 $N_COMMON_UTTERANCES); do
-        utterance_id=$(make_utterance_id $j)
-        text_id="$speaker_id-$utterance_id-c"
-        trans_file="$CORPUS_DIR/$speaker_id/texto/comunes/$speaker_id$utterance_id.txt"
+        sentence_id=$(make_sentence_id $j)
+        utterance_id="$speaker_id-$sentence_id-c"
+        trans_file="$CORPUS_DIR/$speaker_id/texto/comunes/$speaker_id$sentence_id.txt"
         if [ -f "$trans_file" ]; then
             transcription=$(cat "$trans_file")
-            echo "$text_id $transcription" >> "$DATA_DIR/train/text"
+            echo "$utterance_id $transcription" >> "$DATA_DIR/train/text"
         fi
     done
 
     # Individual utterances
     for k in $(seq 1 $N_INDIVIDUAL_UTTERANCES_TRAINING); do
-        utterance_id=$(make_utterance_id $k)
-        text_id="$speaker_id-$utterance_id-i"
-        trans_file="$CORPUS_DIR/$speaker_id/texto/individuales/$speaker_id$utterance_id.txt"
+        sentence_id=$(make_sentence_id $k)
+        utterance_id="$speaker_id-$sentence_id-i"
+        trans_file="$CORPUS_DIR/$speaker_id/texto/individuales/$speaker_id$sentence_id.txt"
         if [ -f "$trans_file" ]; then
             transcription=$(cat "$trans_file")
-            echo "$text_id $transcription" >> "$DATA_DIR/train/text"
+            echo "$utterance_id $transcription" >> "$DATA_DIR/train/text"
         fi
     done
 
@@ -102,12 +102,12 @@ for i in $(seq 1 $N_SPEAKERS); do
 
     # Individual utterances
     for k in $(seq $N_INDIVIDUAL_UTTERANCES_TRAINING $N_INDIVIDUAL_UTTERANCES); do
-        utterance_id=$(make_utterance_id $k)
-        text_id="$speaker_id-$utterance_id-i"
-        trans_file="$CORPUS_DIR/$speaker_id/texto/individuales/$speaker_id$utterance_id.txt"
+        sentence_id=$(make_sentence_id $k)
+        utterance_id="$speaker_id-$sentence_id-i"
+        trans_file="$CORPUS_DIR/$speaker_id/texto/individuales/$speaker_id$sentence_id.txt"
         if [ -f "$trans_file" ]; then
             transcription=$(cat "$trans_file")
-            echo "$text_id $transcription" >> "$DATA_DIR/test/text"
+            echo "$utterance_id $transcription" >> "$DATA_DIR/test/text"
         fi
     done
 
