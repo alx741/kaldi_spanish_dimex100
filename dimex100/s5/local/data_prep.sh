@@ -94,7 +94,52 @@ done
 
 
 
+
 ####################
 # data/train/wav.scp
 # data/test/wav.scp
 ####################
+
+
+### Generate data/train/wav.scp
+for i in $(seq 1 $N_SPEAKERS); do
+    speaker_id=$(make_speaker_id $i)
+
+    # Common utterances
+    for j in $(seq 1 $N_COMMON_UTTERANCES); do
+        sentence_id=$(make_sentence_id $j)
+        utterance_id="$speaker_id-$sentence_id-c"
+        wav_file="$CORPUS_DIR/$speaker_id/audio_editado/comunes/$speaker_id$sentence_id.wav"
+        if [ -f "$wav_file" ]; then
+            echo "$utterance_id $wav_file" >> "$DATA_DIR/train/wav.scp"
+        fi
+    done
+
+    # Individual utterances
+    for k in $(seq 1 $N_INDIVIDUAL_UTTERANCES_TRAINING); do
+        sentence_id=$(make_sentence_id $k)
+        utterance_id="$speaker_id-$sentence_id-i"
+        wav_file="$CORPUS_DIR/$speaker_id/audio_editado/individuales/$speaker_id$sentence_id.wav"
+        if [ -f "$wav_file" ]; then
+            echo "$utterance_id $wav_file" >> "$DATA_DIR/train/wav.scp"
+        fi
+    done
+
+done
+
+
+### Generate data/test/wav.scp
+for i in $(seq 1 $N_SPEAKERS); do
+    speaker_id=$(make_speaker_id $i)
+
+    # Individual utterances
+    for k in $(seq $N_INDIVIDUAL_UTTERANCES_TRAINING $N_INDIVIDUAL_UTTERANCES); do
+        sentence_id=$(make_sentence_id $k)
+        utterance_id="$speaker_id-$sentence_id-i"
+        wav_file="$CORPUS_DIR/$speaker_id/audio_editado/individuales/$speaker_id$sentence_id.wav"
+        if [ -f "$wav_file" ]; then
+            echo "$utterance_id $wav_file" >> "$DATA_DIR/test/wav.scp"
+        fi
+    done
+
+done
