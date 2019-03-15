@@ -1,20 +1,20 @@
 #!/bin/bash
 
-mkdir -p data/train data/test data/local
-
 N_SPEAKERS=100
 N_COMMON_UTTERANCES=10
 N_INDIVIDUAL_UTTERANCES=50
 N_INDIVIDUAL_UTTERANCES_TRAINING=40
 N_INDIVIDUAL_UTTERANCES_TESTING=10
 CORPUS_DIR="$1"
+DATA_DIR="$2"
 
-DATA_DIR="../data"
+rm -rfv "$DATA_DIR"
+mkdir -p "$DATA_DIR/train" "$DATA_DIR/test" "$DATA_DIR/local"
 
-##################
-# /data/train/text
-# /data/test/text
-##################
+#################
+# data/train/text
+# data/test/text
+#################
 
 # speakerId-utteranceId-[c|i]
 #   c = speaker common utterances (10)
@@ -38,33 +38,12 @@ DATA_DIR="../data"
 
 function make_speaker_id
 {
-    index="$1"
-    digits="${#index}"
-    case $digits in
-        '1')
-            echo "s00$index"
-            ;;
-        '2')
-            echo "s0$index"
-            ;;
-        '3')
-            echo "s$index"
-            ;;
-    esac
+    printf "s%03d" "$1"
 }
 
 function make_sentence_id
 {
-    index="$1"
-    digits="${#index}"
-    case $digits in
-        '1')
-            echo "0$index"
-            ;;
-        '2')
-            echo "$index"
-            ;;
-    esac
+    printf "%02d" "$1"
 }
 
 ### Generate data/train/text
@@ -112,3 +91,10 @@ for i in $(seq 1 $N_SPEAKERS); do
     done
 
 done
+
+
+
+####################
+# data/train/wav.scp
+# data/test/wav.scp
+####################
