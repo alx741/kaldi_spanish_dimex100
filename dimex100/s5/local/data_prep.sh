@@ -3,6 +3,8 @@
 mkdir -p data/train data/test data/local
 
 N_SPEAKERS=100
+N_COMMON_UTTERANCES=10
+N_INDIVIDUAL_UTTERANCES=50
 
 ##################
 # /data/train/text
@@ -10,8 +12,14 @@ N_SPEAKERS=100
 ##################
 
 # speakerId-utteranceId-[c|i]
-#   c = commun
-#   i = individual
+#   c = speaker common utterances (10)
+#   i = speaker individual utterances (50)
+
+## 80-20 train-test split
+## Only individual utterances are used in testing
+#    10/10 common utterances go into training
+#    40/50 individual utterances go into training
+#    10/50 individual utterances go into testing
 
 # s001-01-c
 # ...
@@ -34,6 +42,20 @@ function make_speaker_id
             ;;
         '3')
             echo "s$index"
+            ;;
+    esac
+}
+
+function make_utterance_id
+{
+    index="$1"
+    digits="${#index}"
+    case $digits in
+        '1')
+            echo "0$index"
+            ;;
+        '2')
+            echo "$index"
             ;;
     esac
 }
