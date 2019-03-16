@@ -170,3 +170,16 @@ while read -r utterance_id; do
     speaker_id=$(echo "$utterance_id" | cut -d'-' -f1)
     echo "$utterance_id $speaker_id" >> "$DATA_DIR/test/utt2spk"
 done <<< "$utterance_ids"
+
+
+
+############
+# Sort files
+############
+
+sort -o "$DATA_DIR/train/text" "$DATA_DIR/train/text"
+sort -o "$DATA_DIR/test/text" "$DATA_DIR/test/text"
+sort -o "$DATA_DIR/train/wav.scp" "$DATA_DIR/train/wav.scp"
+sort -o "$DATA_DIR/test/wav.scp" "$DATA_DIR/test/wav.scp"
+sort -o "$DATA_DIR/train/utt2spk" "$DATA_DIR/train/utt2spk"
+sort -o "$DATA_DIR/test/utt2spk" "$DATA_DIR/test/utt2spk"
