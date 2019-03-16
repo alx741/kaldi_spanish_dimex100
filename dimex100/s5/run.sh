@@ -14,3 +14,10 @@ if [ ! -d "$CORPUS_DIR" ]; then
   wget http://turing.iimas.unam.mx/~luis/DIME/DIMEx100/DVD/DVDCorpusDimex100.zip || exit 1;
   unzip DVDCorpusDimex100.zip || exit 1;
 fi
+
+##################
+# Data preparation
+##################
+
+rm -rf data exp mfcc
+local/data_prep.sh "$CORPUS_DIR" "./data"
