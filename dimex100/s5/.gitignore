@@ -1,7 +1,4 @@
 DVDCorpusDimex100.zip
 CorpusDimex100
 
-data/train/text
-data/test/text
-data/train/wav.scp
-data/test/wav.scp
+data
