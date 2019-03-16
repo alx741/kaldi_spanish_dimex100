@@ -6,7 +6,7 @@ N_INDIVIDUAL_UTTERANCES=50
 N_INDIVIDUAL_UTTERANCES_TRAINING=40
 N_INDIVIDUAL_UTTERANCES_TESTING=10
 CORPUS_DIR="$1"
-DATA_DIR="$2"
+ DATA_DIR="$2"
 
 rm -rfv "$DATA_DIR"
 mkdir -p "$DATA_DIR/train" "$DATA_DIR/test" "$DATA_DIR/local"
@@ -143,3 +143,30 @@ for i in $(seq 1 $N_SPEAKERS); do
     done
 
 done
+
+
+
+
+####################
+# data/train/utt2spk
+# data/test/utt2spk
+####################
+
+# Take IDs from 'text' file to avoid including missing data's IDs
+
+### Generate data/train/utt2spk
+utterance_ids=$(cat "$DATA_DIR/train/text" | cut -d' ' -f1)
+
+while read -r utterance_id; do
+    speaker_id=$(echo "$utterance_id" | cut -d'-' -f1)
+    echo "$utterance_id $speaker_id" >> "$DATA_DIR/train/utt2spk"
+done <<< "$utterance_ids"
+
+
+### Generate data/test/utt2spk
+utterance_ids=$(cat "$DATA_DIR/test/text" | cut -d' ' -f1)
+
+while read -r utterance_id; do
+    speaker_id=$(echo "$utterance_id" | cut -d'-' -f1)
+    echo "$utterance_id $speaker_id" >> "$DATA_DIR/test/utt2spk"
+done <<< "$utterance_ids"
