@@ -177,9 +177,9 @@ done <<< "$utterance_ids"
 # Sort files
 ############
 
-sort -o "$DATA_DIR/train/text" "$DATA_DIR/train/text"
-sort -o "$DATA_DIR/test/text" "$DATA_DIR/test/text"
-sort -o "$DATA_DIR/train/wav.scp" "$DATA_DIR/train/wav.scp"
-sort -o "$DATA_DIR/test/wav.scp" "$DATA_DIR/test/wav.scp"
-sort -o "$DATA_DIR/train/utt2spk" "$DATA_DIR/train/utt2spk"
-sort -o "$DATA_DIR/test/utt2spk" "$DATA_DIR/test/utt2spk"
+LC_ALL=C sort -o "$DATA_DIR/train/text" "$DATA_DIR/train/text"
+LC_ALL=C sort -o "$DATA_DIR/test/text" "$DATA_DIR/test/text"
+LC_ALL=C sort -o "$DATA_DIR/train/wav.scp" "$DATA_DIR/train/wav.scp"
+LC_ALL=C sort -o "$DATA_DIR/test/wav.scp" "$DATA_DIR/test/wav.scp"
+LC_ALL=C sort -o "$DATA_DIR/train/utt2spk" "$DATA_DIR/train/utt2spk"
+LC_ALL=C sort -o "$DATA_DIR/test/utt2spk" "$DATA_DIR/test/utt2spk"
