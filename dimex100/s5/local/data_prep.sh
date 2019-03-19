@@ -1,7 +1,9 @@
 #!/bin/bash
 
+## Only run this file from the example root directory
+##      $ ./local/data_prep.sh
+
 CORPUS_DIR="$1"
-DATA_DIR="$2"
 
 N_SPEAKERS=100
 N_COMMON_UTTERANCES=10
@@ -9,7 +11,7 @@ N_INDIVIDUAL_UTTERANCES=50
 N_INDIVIDUAL_UTTERANCES_TRAINING=40
 N_INDIVIDUAL_UTTERANCES_TESTING=10
 
-mkdir -p "$DATA_DIR/train" "$DATA_DIR/test" "$DATA_DIR/local"
+mkdir -p "data/train" "data/test" "data/local"
 
 #################
 # data/train/text
@@ -57,7 +59,7 @@ for i in $(seq 1 $N_SPEAKERS); do
         trans_file="$CORPUS_DIR/$speaker_id/texto/comunes/$speaker_id$sentence_id.txt"
         if [ -f "$trans_file" ]; then
             transcription=$(cat "$trans_file")
-            echo "$utterance_id $transcription" >> "$DATA_DIR/train/text"
+            echo "$utterance_id $transcription" >> "data/train/text"
         fi
     done
 
@@ -68,7 +70,7 @@ for i in $(seq 1 $N_SPEAKERS); do
         trans_file="$CORPUS_DIR/$speaker_id/texto/individuales/$speaker_id$sentence_id.txt"
         if [ -f "$trans_file" ]; then
             transcription=$(cat "$trans_file")
-            echo "$utterance_id $transcription" >> "$DATA_DIR/train/text"
+            echo "$utterance_id $transcription" >> "data/train/text"
         fi
     done
 
@@ -86,7 +88,7 @@ for i in $(seq 1 $N_SPEAKERS); do
         trans_file="$CORPUS_DIR/$speaker_id/texto/individuales/$speaker_id$sentence_id.txt"
         if [ -f "$trans_file" ]; then
             transcription=$(cat "$trans_file")
-            echo "$utterance_id $transcription" >> "$DATA_DIR/test/text"
+            echo "$utterance_id $transcription" >> "data/test/text"
         fi
     done
 
@@ -111,7 +113,7 @@ for i in $(seq 1 $N_SPEAKERS); do
         utterance_id="$speaker_id-$sentence_id-c"
         wav_file="$CORPUS_DIR/$speaker_id/audio_editado/comunes/$speaker_id$sentence_id.wav"
         if [ -f "$wav_file" ]; then
-            echo "$utterance_id $wav_file" >> "$DATA_DIR/train/wav.scp"
+            echo "$utterance_id $wav_file" >> "data/train/wav.scp"
         fi
     done
 
@@ -121,7 +123,7 @@ for i in $(seq 1 $N_SPEAKERS); do
         utterance_id="$speaker_id-$sentence_id-i"
         wav_file="$CORPUS_DIR/$speaker_id/audio_editado/individuales/$speaker_id$sentence_id.wav"
         if [ -f "$wav_file" ]; then
-            echo "$utterance_id $wav_file" >> "$DATA_DIR/train/wav.scp"
+            echo "$utterance_id $wav_file" >> "data/train/wav.scp"
         fi
     done
 
@@ -138,7 +140,7 @@ for i in $(seq 1 $N_SPEAKERS); do
         utterance_id="$speaker_id-$sentence_id-i"
         wav_file="$CORPUS_DIR/$speaker_id/audio_editado/individuales/$speaker_id$sentence_id.wav"
         if [ -f "$wav_file" ]; then
-            echo "$utterance_id $wav_file" >> "$DATA_DIR/test/wav.scp"
+            echo "$utterance_id $wav_file" >> "data/test/wav.scp"
         fi
     done
 
@@ -155,31 +157,38 @@ done
 # Take IDs from 'text' file to avoid including missing data's IDs
 
 ### Generate data/train/utt2spk
-utterance_ids=$(cat "$DATA_DIR/train/text" | cut -d' ' -f1)
+utterance_ids=$(cat "data/train/text" | cut -d' ' -f1)
 
 while read -r utterance_id; do
     speaker_id=$(echo "$utterance_id" | cut -d'-' -f1)
-    echo "$utterance_id $speaker_id" >> "$DATA_DIR/train/utt2spk"
+    echo "$utterance_id $speaker_id" >> "data/train/utt2spk"
 done <<< "$utterance_ids"
 
 
 ### Generate data/test/utt2spk
-utterance_ids=$(cat "$DATA_DIR/test/text" | cut -d' ' -f1)
+utterance_ids=$(cat "data/test/text" | cut -d' ' -f1)
 
 while read -r utterance_id; do
     speaker_id=$(echo "$utterance_id" | cut -d'-' -f1)
-    echo "$utterance_id $speaker_id" >> "$DATA_DIR/test/utt2spk"
+    echo "$utterance_id $speaker_id" >> "data/test/utt2spk"
 done <<< "$utterance_ids"
-
 
 
 ############
 # Sort files
 ############
 
-LC_ALL=C sort -o "$DATA_DIR/train/text" "$DATA_DIR/train/text"
-LC_ALL=C sort -o "$DATA_DIR/test/text" "$DATA_DIR/test/text"
-LC_ALL=C sort -o "$DATA_DIR/train/wav.scp" "$DATA_DIR/train/wav.scp"
-LC_ALL=C sort -o "$DATA_DIR/test/wav.scp" "$DATA_DIR/test/wav.scp"
-LC_ALL=C sort -o "$DATA_DIR/train/utt2spk" "$DATA_DIR/train/utt2spk"
-LC_ALL=C sort -o "$DATA_DIR/test/utt2spk" "$DATA_DIR/test/utt2spk"
+LC_ALL=C sort -o "data/train/text" "data/train/text"
+LC_ALL=C sort -o "data/test/text" "data/test/text"
+LC_ALL=C sort -o "data/train/wav.scp" "data/train/wav.scp"
+LC_ALL=C sort -o "data/test/wav.scp" "data/test/wav.scp"
+LC_ALL=C sort -o "data/train/utt2spk" "data/train/utt2spk"
+LC_ALL=C sort -o "data/test/utt2spk" "data/test/utt2spk"
+
+
+####################
+# data/train/spk2utt
+# data/test/spk2utt
+####################
+utils/utt2spk_to_spk2utt.pl "data/train/utt2spk" > "data/train/spk2utt"
+utils/utt2spk_to_spk2utt.pl "data/test/utt2spk" > "data/test/spk2utt"

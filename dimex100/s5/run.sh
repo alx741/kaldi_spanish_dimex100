@@ -20,4 +20,4 @@ fi
 ##################
 
 rm -rf data exp mfcc
-local/data_prep.sh "$CORPUS_DIR" "./data"
+local/data_prep.sh "$CORPUS_DIR"
