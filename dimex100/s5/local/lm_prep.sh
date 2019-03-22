@@ -37,5 +37,5 @@ $ngram_count_exe -lm data/3gram_arpa_lm.gz \
     -kndiscount1 -gt1min 0 -kndiscount2 -gt2min 2 \
     -kndiscount3 -gt3min 3 -order 3 \
     -unk -sort -map-unk "$OOV_SYMBOL" \
-    # -vocab data/vocab \ # In case a custom vocabulary is available
     -text data/lm_text
+    # -vocab data/vocab # In case a custom vocabulary is available
