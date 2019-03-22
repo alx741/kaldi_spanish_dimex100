@@ -19,23 +19,37 @@ else
 fi
 
 
-##############
-# data/lm_text
-##############
+########################
+# data/local/tmp/lm_text
+########################
 
 # Text sentences input for language model generation
 # taken from data/[train|test]/text but with utterance IDs removed
 
-cat data/train/text data/test/text | cut -d' ' -f1 --complement > data/lm_text
+cat data/train/text data/test/text | cut -d' ' -f1 --complement > data/local/tmp/lm_text
 
 
-#######################
-# data/3gram_arpa_lm.gz
-#######################
+#################################
+# data/local/tmp/3gram_arpa_lm.gz
+##################################
 
-$ngram_count_exe -lm data/3gram_arpa_lm.gz \
+$ngram_count_exe -lm data/local/tmp/3gram_arpa_lm.gz \
     -kndiscount1 -gt1min 0 -kndiscount2 -gt2min 2 \
     -kndiscount3 -gt3min 3 -order 3 \
     -unk -sort -map-unk "$OOV_SYMBOL" \
-    -text data/lm_text
+    -text data/local/tmp/lm_text
     # -vocab data/vocab # In case a custom vocabulary is available
+
+
+######################
+# data/local/tmp/G.txt
+# data/lang/G.fst
+######################
+
+gunzip -c data/local/tmp/3gram_arpa_lm.gz \
+    | arpa2fst --disambig-symbol=#0 --read-symbol-table=data/lang/words.txt - data/lang/G.fst
+
+fstcompile --isymbols=data/lang/words.txt --osymbols=data/lang/words.txt \
+  data/lang/tmpdir.g/select_empty.fst.txt \
+  | fstarcsort --sort_type=olabel \
+  | fstcompose - data/lang/G.fst > data/lang/tmpdir.g/empty_words.fst
