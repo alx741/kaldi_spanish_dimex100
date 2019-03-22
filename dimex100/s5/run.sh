@@ -1,9 +1,13 @@
 #!/bin/bash
 
+########
+# Config
+########
+
 train_cmd="utils/run.pl"
 decode_cmd="utils/run.pl"
-
 CORPUS_DIR="CorpusDimex100"
+OOV_SYMBOL="<unk>"
 
 
 #################
