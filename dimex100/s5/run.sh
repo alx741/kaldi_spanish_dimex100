@@ -15,9 +15,26 @@ if [ ! -d "$CORPUS_DIR" ]; then
   unzip DVDCorpusDimex100.zip || exit 1;
 fi
 
+
 ##################
 # Data preparation
 ##################
 
 rm -rf data exp mfcc
 local/data_prep.sh "$CORPUS_DIR"
+utils/fix_data_dir.sh "data/train"
+utils/fix_data_dir.sh "data/test"
+
+
+#####################
+# Features generation
+#####################
+
+steps/make_mfcc.sh --nj 20 --cmd "$train_cmd" "data/train" "exp/make_mfcc/train" mfcc
+steps/make_mfcc.sh --nj 20 --cmd "$train_cmd" "data/test"  "exp/make_mfcc/test"  mfcc
+
+steps/compute_cmvn_stats.sh "data/train" "exp/make_mfcc/train" mfcc
+steps/compute_cmvn_stats.sh "data/test" "exp/make_mfcc/test" mfcc
+
+utils/validate_data_dir.sh "data/train"
+utils/validate_data_dir.sh "data/test"
