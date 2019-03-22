@@ -29,11 +29,11 @@ fi
 cat data/train/text data/test/text | cut -d' ' -f1 --complement > data/lm_text
 
 
-######################
-# data/3gram_arp_lm.gz
-######################
+#######################
+# data/3gram_arpa_lm.gz
+#######################
 
-$ngram_count_exe -lm data/3gram_arp_lm.gz \
+$ngram_count_exe -lm data/3gram_arpa_lm.gz \
     -kndiscount1 -gt1min 0 -kndiscount2 -gt2min 2 \
     -kndiscount3 -gt3min 3 -order 3 \
     -unk -sort -map-unk "$OOV_SYMBOL" \
