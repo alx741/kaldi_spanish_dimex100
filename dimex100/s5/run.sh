@@ -49,3 +49,10 @@ utils/validate_data_dir.sh "data/test"
 #######################
 
 local/lang_prep.sh "$CORPUS_DIR" "$OOV_SYMBOL"
+
+
+############################
+# Language model preparation
+############################
+
+local/lm_prep.sh "$OOV_SYMBOL"
