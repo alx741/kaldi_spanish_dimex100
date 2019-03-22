@@ -42,3 +42,10 @@ steps/compute_cmvn_stats.sh "data/test" "exp/make_mfcc/test" mfcc
 
 utils/validate_data_dir.sh "data/train"
 utils/validate_data_dir.sh "data/test"
+
+
+#######################
+# Lang data preparation
+#######################
+
+local/lang_prep.sh "$CORPUS_DIR" "$OOV_SYMBOL"
