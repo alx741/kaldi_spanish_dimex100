@@ -7,7 +7,7 @@
 train_cmd="utils/run.pl"
 decode_cmd="utils/run.pl"
 CORPUS_DIR="CorpusDimex100"
-OOV_SYMBOL="<unk>"
+OOV_SYMBOL="<OOV>"
 
 
 #################
@@ -48,6 +48,7 @@ utils/validate_data_dir.sh "data/test"
 # Lang data preparation
 #######################
 
+rm -rf data/local/dict
 local/lang_prep.sh "$CORPUS_DIR" "$OOV_SYMBOL"
 
 

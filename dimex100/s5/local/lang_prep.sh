@@ -12,24 +12,23 @@ mkdir -p "data/local/dict"
 # data/local/dict/lexicon.txt
 #############################
 
-cp "$CORPUS_DIR/diccionarios/T22.full.dic" data/local/dict/lexicon.txt
+echo "$OOV_SYMBOL $OOV_SYMBOL" > data/local/dict/lexicon.txt
+cat "$CORPUS_DIR/diccionarios/T22.full.dic" >> data/local/dict/lexicon.txt
 
 
 #######################################
 # data/local/dict/silence_phones.txt
+# data/local/dict/optional_silence.txt
 # data/local/dict/nonsilence_phones.txt
 # data/local/dict/extra_questions.txt
 #######################################
 
-# Use the Mexbet phones alphabet
-# http://turing.iimas.unam.mx/~luis/DIME/DIMEx100/manualdimex100/mexbet.html
-
-touch data/local/dict/silence_phones.txt
-touch data/local/dict/extra_questions.txt
+echo -e "SIL" > data/local/dict/silence_phones.txt
+echo "SIL" > data/local/dict/optional_silence.txt
 cat data/local/dict/lexicon.txt \
     | tr '\t' ' ' \
     | cut -d' ' -f1 --complement \
-    | sed 's/ / /g' \
+    | sed 's/ /\n/g' \
     | sort -u \
     > data/local/dict/nonsilence_phones.txt
 
