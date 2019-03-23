@@ -7,6 +7,10 @@
 
 OOV_SYMBOL="$1"
 
+mkdir -p "data/local/tmp" "data/lang/tmp"
+
+source ./path.sh
+
 if [ -d "../../../tools/srilm/bin/i686-m64" ]; then
     ngram_count_exe="../../../tools/srilm/bin/i686-m64/ngram-count"
 elif [ -d "../../../tools/srilm/bin/i686" ]; then
@@ -41,15 +45,9 @@ $ngram_count_exe -lm data/local/tmp/3gram_arpa_lm.gz \
     # -vocab data/vocab # In case a custom vocabulary is available
 
 
-######################
-# data/local/tmp/G.txt
+#################
 # data/lang/G.fst
-######################
+#################
 
 gunzip -c data/local/tmp/3gram_arpa_lm.gz \
     | arpa2fst --disambig-symbol=#0 --read-symbol-table=data/lang/words.txt - data/lang/G.fst
-
-fstcompile --isymbols=data/lang/words.txt --osymbols=data/lang/words.txt \
-  data/lang/tmpdir.g/select_empty.fst.txt \
-  | fstarcsort --sort_type=olabel \
-  | fstcompose - data/lang/G.fst > data/lang/tmpdir.g/empty_words.fst
