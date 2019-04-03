@@ -3,6 +3,10 @@
 ## Only run this file from the example root directory
 ##      $ ./local/data_prep.sh
 
+mkdir -p "data/train" "data/test" "data/local"
+
+source ./path.sh
+
 CORPUS_DIR="$1"
 
 N_SPEAKERS=100
@@ -10,8 +14,6 @@ N_COMMON_UTTERANCES=10
 N_INDIVIDUAL_UTTERANCES=50
 N_INDIVIDUAL_UTTERANCES_TRAINING=40
 N_INDIVIDUAL_UTTERANCES_TESTING=10
-
-mkdir -p "data/train" "data/test" "data/local"
 
 #################
 # data/train/text
@@ -48,6 +50,11 @@ function make_sentence_id
     printf "%02d" "$1"
 }
 
+function clean
+{
+    echo "$1" | tr -d ',.;:-_?¿!"'
+}
+
 ### Generate data/train/text
 for i in $(seq 1 $N_SPEAKERS); do
     speaker_id=$(make_speaker_id $i)
@@ -59,7 +66,7 @@ for i in $(seq 1 $N_SPEAKERS); do
         trans_file="$CORPUS_DIR/$speaker_id/texto/comunes/$speaker_id$sentence_id.txt"
         if [ -f "$trans_file" ]; then
             transcription=$(cat "$trans_file" | tr -d '\r')
-            echo "$utterance_id $transcription" >> "data/train/text"
+            clean "$utterance_id $transcription" >> "data/train/text"
         fi
     done
 
@@ -70,7 +77,7 @@ for i in $(seq 1 $N_SPEAKERS); do
         trans_file="$CORPUS_DIR/$speaker_id/texto/individuales/$speaker_id$sentence_id.txt"
         if [ -f "$trans_file" ]; then
             transcription=$(cat "$trans_file" | tr -d '\r')
-            echo "$utterance_id $transcription" >> "data/train/text"
+            clean "$utterance_id $transcription" >> "data/train/text"
         fi
     done
 
@@ -88,7 +95,7 @@ for i in $(seq 1 $N_SPEAKERS); do
         trans_file="$CORPUS_DIR/$speaker_id/texto/individuales/$speaker_id$sentence_id.txt"
         if [ -f "$trans_file" ]; then
             transcription=$(cat "$trans_file" | tr -d '\r')
-            echo "$utterance_id $transcription" >> "data/test/text"
+            clean "$utterance_id $transcription" >> "data/test/text"
         fi
     done
 
