@@ -35,30 +35,20 @@ cat data/train/text data/test/text | cut -d' ' -f1 --complement > data/local/tmp
 # data/local/tmp/3gram_arpa_lm.gz
 ##################################
 
-$ngram_count_exe -lm data/local/tmp/3gram_arpa_lm.gz \
-    -kndiscount1 -gt1min 0 -kndiscount2 -gt2min 2 \
-    -kndiscount3 -gt3min 3 -order 3 \
+$ngram_count_exe -lm data/local/tmp/3gram_lm.arpa \
+    -order 3 \
     -write-vocab data/local/tmp/vocab-full.txt \
-    -unk -sort -map-unk "<UNK>" \
+    -sort \
+    -wbdiscount \
+    -map-unk "<UNK>" \
+#     -kndiscount1 -gt1min 0 -kndiscount2 -gt2min 2 \
+#     -kndiscount3 -gt3min 3 -order 3 \
     -text data/local/tmp/lm_text
-    # -vocab data/vocab # In case a custom vocabulary is available
-
-
-# $ngram_count_exe -lm data/local/tmp/3gram_lm.arpa \
-#     -order 3 \
-#     -write-vocab data/local/tmp/vocab-full.txt \
-#     -wbdiscount \
-###   -sort \
-#     -map-unk "<UNK>" \
-#     -text data/local/tmp/lm_text
-#     # -vocab data/vocab # In case a custom vocabulary is available
 
 
 #################
 # data/lang/G.fst
 #################
 
-gunzip -c data/local/tmp/3gram_arpa_lm.gz \
-    | arpa2fst --disambig-symbol=#0 --read-symbol-table=data/lang/words.txt - data/lang/G.fst
-
-# arpa2fst --disambig-symbol=#0 --read-symbol-table=data/lang/words.txt data/local/tmp/3gram_lm.arpa data/lang/G.fst
+arpa2fst --disambig-symbol=#0 --read-symbol-table=data/lang/words.txt \
+    data/local/tmp/3gram_lm.arpa data/lang/G.fst
