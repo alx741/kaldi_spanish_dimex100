@@ -52,6 +52,9 @@ utils/validate_data_dir.sh "data/test"
 
 rm -rf data/local/dict
 local/lang_prep.sh "$CORPUS_DIR"
+utils/prepare_lang.sh data/local/dict "<UNK>" data/local/lang data/lang
+utils/fix_data_dir.sh "data/train"
+utils/fix_data_dir.sh "data/test"
 
 
 ############################
@@ -59,7 +62,6 @@ local/lang_prep.sh "$CORPUS_DIR"
 ############################
 
 local/lm_prep.sh
-utils/prepare_lang.sh data/local/dict "<UNK>" data/local/lang data/lang
 
 
 #######################
