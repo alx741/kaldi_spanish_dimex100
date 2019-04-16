@@ -52,7 +52,7 @@ function make_sentence_id
 
 function clean
 {
-    echo "$1" | tr -d ',.;:-_?¿!"'
+    echo "$1" | tr -d "_,.;:-?¿!'\"()"
 }
 
 ### Generate data/train/text
