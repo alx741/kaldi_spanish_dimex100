@@ -41,9 +41,9 @@ $ngram_count_exe -lm data/local/tmp/3gram_lm.arpa \
     -sort \
     -wbdiscount \
     -map-unk "<UNK>" \
-#     -kndiscount1 -gt1min 0 -kndiscount2 -gt2min 2 \
-#     -kndiscount3 -gt3min 3 -order 3 \
     -text data/local/tmp/lm_text
+    # -kndiscount1 -gt1min 0 -kndiscount2 -gt2min 2 \
+    # -kndiscount3 -gt3min 3 -order 3 \
 
 
 #################
