@@ -29,6 +29,7 @@ cat "$CORPUS_DIR/diccionarios/T22.full.dic" \
         -e 's/elec_7ctrico/eléctrico/' \
         -e 's/gr_7afico/gráfico/' \
         -e 's/s_7lo/sólo/' \
+    | sed -e 's/n~/ni/g' -e 's/r(/rh/g' \
     | sed -e 's/\t/ /g' -e '/^$/d' \
     | sort | uniq \
     >> data/local/dict/lexicon.txt
