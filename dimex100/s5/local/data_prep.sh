@@ -52,7 +52,11 @@ function make_sentence_id
 
 function clean
 {
-    echo "$1" | tr -d "_,.;:-?¿!'\"()"
+    echo "$1" \
+        | tr -d '\r' \
+        | tr -d "_,.;:\-?¿!'\"()" \
+        | tr '[:upper:]' '[:lower:]' \
+        | tr 'áéíóúñ' 'ÁÉÍÓÚÑ'
 }
 
 ### Generate data/train/text
@@ -65,8 +69,9 @@ for i in $(seq 1 $N_SPEAKERS); do
         utterance_id="$speaker_id-$sentence_id-c"
         trans_file="$CORPUS_DIR/$speaker_id/texto/comunes/$speaker_id$sentence_id.txt"
         if [ -f "$trans_file" ]; then
-            transcription=$(cat "$trans_file" | tr -d '\r')
-            clean "$utterance_id $transcription" >> "data/train/text"
+            transcription=$(cat "$trans_file")
+            transcription=$(clean "$transcription")
+            echo "$utterance_id $transcription" >> "data/train/text"
         fi
     done
 
@@ -76,8 +81,9 @@ for i in $(seq 1 $N_SPEAKERS); do
         utterance_id="$speaker_id-$sentence_id-i"
         trans_file="$CORPUS_DIR/$speaker_id/texto/individuales/$speaker_id$sentence_id.txt"
         if [ -f "$trans_file" ]; then
-            transcription=$(cat "$trans_file" | tr -d '\r')
-            clean "$utterance_id $transcription" >> "data/train/text"
+            transcription=$(cat "$trans_file")
+            transcription=$(clean "$transcription")
+            echo "$utterance_id $transcription" >> "data/train/text"
         fi
     done
 
@@ -94,8 +100,9 @@ for i in $(seq 1 $N_SPEAKERS); do
         utterance_id="$speaker_id-$sentence_id-i"
         trans_file="$CORPUS_DIR/$speaker_id/texto/individuales/$speaker_id$sentence_id.txt"
         if [ -f "$trans_file" ]; then
-            transcription=$(cat "$trans_file" | tr -d '\r')
-            clean "$utterance_id $transcription" >> "data/test/text"
+            transcription=$(cat "$trans_file")
+            transcription=$(clean "$transcription")
+            echo "$utterance_id $transcription" >> "data/test/text"
         fi
     done
 
