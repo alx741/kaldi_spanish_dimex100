@@ -7,7 +7,6 @@
 train_cmd="utils/run.pl"
 decode_cmd="utils/run.pl"
 
-# TODO: break this to see if something complains
 CORPUS_DIR="CorpusDimex100"
 
 N_HMM=2000 # leaves
@@ -96,16 +95,21 @@ steps/align_si.sh --cmd "$train_cmd" data/train data/lang exp/mono exp/mono_alig
 steps/train_deltas.sh "$N_HMM" "$N_GAUSSIANS" data/train data/lang exp/mono_aligned exp/tri1 || exit 1
 steps/align_si.sh --cmd "$train_cmd" data/train data/lang exp/tri1 exp/tri1_aligned || exit 1
 
-steps/train_lda_mllt.sh --cmd "$train_cmd" "$N_HMM" "$N_GAUSSIANS" data/train data/lang exp/tri1_aligned exp/tri2 || exit 1;
+# train tri2b [LDA+MLLT]
+steps/train_lda_mllt.sh --cmd "$train_cmd" "$N_HMM" "$N_GAUSSIANS" data/train data/lang exp/tri1_aligned exp/tri2b || exit 1;
+utils/mkgraph.sh data/lang exp/tri2b exp/tri2b/graph
+steps/align_si.sh --cmd "$train_cmd" data/train data/lang exp/tri2b exp/tri2b_aligned || exit 1
 
-# Graph compilation
-utils/mkgraph.sh data/lang exp/tri2 exp/tri2/graph_tgpr
+#  Do MMI on top of LDA+MLLT.
+steps/make_denlats.sh --cmd "$train_cmd" data/train data/lang exp/tri2b exp/tri2b_denlats || exit 1;
+steps/train_mmi.sh --boost 0.05 data/train data/lang exp/tri2b_aligned exp/tri2b_denlats exp/tri2b_mmi_b0.05 || exit 1;
+
+
 
 # Decoding
 echo
 echo Decoding
 echo
-steps/decode.sh --config conf/decode.config --cmd "$decode_cmd" exp/tri2/graph_tgpr data/test exp/tri2/decode_test
-# steps/decode.sh --config conf/decode.config --cmd "$decode_cmd" exp/mono/graph_tgpr data/train exp/mono/decode_test
+steps/decode.sh --config conf/decode.config --cmd "$decode_cmd" exp/tri2b/graph data/test exp/tri2b_mmi_b0.05/decode_test
 
 for x in exp/*/decode*; do [ -d $x ] && grep WER $x/wer_* | utils/best_wer.sh; done
