@@ -54,9 +54,13 @@ function clean
 {
     echo "$1" \
         | tr -d '\r' \
-        | tr -d "_,.;:\-?¿!'\"()" \
         | tr '[:upper:]' '[:lower:]' \
-        | tr 'áéíóúñ' 'ÁÉÍÓÚÑ'
+        | sed \
+            -e 's/á/a/g' -e 's/é/e/g' -e 's/í/i/g' -e 's/ó/o/g' -e 's/ú/u/g' \
+            -e 's/Á/a/g' -e 's/É/e/g' -e 's/Í/i/g' -e 's/Ó/o/g' -e 's/Ú/u/g' \
+            -e 's/ñ/n/g' -e 's/Ñ/n/g' -e 's/ü/u/g' -e 's/Ü/u/g' \
+        | tr -d -c "a-zA-Z0-9 \r\n"
+        # | tr -d -c "_,.;:\-?¿!'\"()" \
 }
 
 ### Generate data/train/text
@@ -68,8 +72,9 @@ for i in $(seq 1 $N_SPEAKERS); do
         sentence_id=$(make_sentence_id $j)
         utterance_id="$speaker_id-$sentence_id-c"
         trans_file="$CORPUS_DIR/$speaker_id/texto/comunes/$speaker_id$sentence_id.txt"
-        if [ -f "$trans_file" ]; then
-            transcription=$(cat "$trans_file")
+        iconv -f iso-8859-1 -t utf-8 "$trans_file" > "$trans_file.utf8"
+        if [ -f "$trans_file.utf8" ]; then
+            transcription=$(cat "$trans_file.utf8")
             transcription=$(clean "$transcription")
             echo "$utterance_id $transcription" >> "data/train/text"
         fi
@@ -80,8 +85,9 @@ for i in $(seq 1 $N_SPEAKERS); do
         sentence_id=$(make_sentence_id $k)
         utterance_id="$speaker_id-$sentence_id-i"
         trans_file="$CORPUS_DIR/$speaker_id/texto/individuales/$speaker_id$sentence_id.txt"
-        if [ -f "$trans_file" ]; then
-            transcription=$(cat "$trans_file")
+        iconv -f iso-8859-1 -t utf-8 "$trans_file" > "$trans_file.utf8"
+        if [ -f "$trans_file.utf8" ]; then
+            transcription=$(cat "$trans_file.utf8")
             transcription=$(clean "$transcription")
             echo "$utterance_id $transcription" >> "data/train/text"
         fi
@@ -99,8 +105,9 @@ for i in $(seq 1 $N_SPEAKERS); do
         sentence_id=$(make_sentence_id $k)
         utterance_id="$speaker_id-$sentence_id-i"
         trans_file="$CORPUS_DIR/$speaker_id/texto/individuales/$speaker_id$sentence_id.txt"
-        if [ -f "$trans_file" ]; then
-            transcription=$(cat "$trans_file")
+        iconv -f iso-8859-1 -t utf-8 "$trans_file" > "$trans_file.utf8"
+        if [ -f "$trans_file.utf8" ]; then
+            transcription=$(cat "$trans_file.utf8")
             transcription=$(clean "$transcription")
             echo "$utterance_id $transcription" >> "data/test/text"
         fi
