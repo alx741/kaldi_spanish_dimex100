@@ -35,11 +35,12 @@ cat data/train/text data/test/text | cut -d' ' -f1 --complement > data/local/tmp
 # data/local/tmp/3gram_arpa_lm.gz
 ##################################
 
-$ngram_count_exe -lm data/local/tmp/3gram_lm.arpa \
+$ngram_count_exe -lm data/local/tmp/3gram_lm.arpa.kn.gz \
     -order 3 \
     -write-vocab data/local/tmp/vocab-full.txt \
     -sort \
     -wbdiscount \
+    -unk \
     -map-unk "<UNK>" \
     -text data/local/tmp/lm_text
     # -kndiscount1 -gt1min 0 -kndiscount2 -gt2min 2 \
@@ -50,5 +51,7 @@ $ngram_count_exe -lm data/local/tmp/3gram_lm.arpa \
 # data/lang/G.fst
 #################
 
-arpa2fst --disambig-symbol=#0 --read-symbol-table=data/lang/words.txt \
-    data/local/tmp/3gram_lm.arpa data/lang/G.fst
+utils/format_lm.sh data/lang \
+    data/local/tmp/3gram_lm.arpa.kn.gz \
+    data/local/dict/lexicon.txt \
+    data/lang
