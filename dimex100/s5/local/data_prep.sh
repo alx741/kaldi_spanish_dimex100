@@ -15,6 +15,56 @@ N_INDIVIDUAL_UTTERANCES=50
 N_INDIVIDUAL_UTTERANCES_TRAINING=40
 N_INDIVIDUAL_UTTERANCES_TESTING=10
 
+function make_speaker_id
+{
+    printf "s%03d" "$1"
+}
+
+function make_sentence_id
+{
+    printf "%02d" "$1"
+}
+
+#####################################
+# Convert wave audio to 16-bit, 16kHz
+#####################################
+
+function convert_to_16khz
+{
+    for i in $(seq 1 $N_SPEAKERS); do
+        speaker_id=$(make_speaker_id $i)
+
+        mkdir -p "$CORPUS_DIR/$speaker_id/audio_16k/comunes"
+        mkdir -p "$CORPUS_DIR/$speaker_id/audio_16k/individuales"
+
+        # Common utterances
+        for j in $(seq 1 $N_COMMON_UTTERANCES); do
+            sentence_id=$(make_sentence_id $j)
+            old_wav_file="$CORPUS_DIR/$speaker_id/audio_editado/comunes/$speaker_id$sentence_id.wav"
+            new_wav_file="$CORPUS_DIR/$speaker_id/audio_16k/comunes/$speaker_id$sentence_id.wav"
+            sox "$old_wav_file" -r 16k "$new_wav_file"
+        done
+
+        # Individual utterances
+        for k in $(seq 1 $N_INDIVIDUAL_UTTERANCES_TRAINING); do
+            sentence_id=$(make_sentence_id $k)
+            old_wav_file="$CORPUS_DIR/$speaker_id/audio_editado/individuales/$speaker_id$sentence_id.wav"
+            new_wav_file="$CORPUS_DIR/$speaker_id/audio_16k/individuales/$speaker_id$sentence_id.wav"
+            sox "$old_wav_file" -r 16k "$new_wav_file"
+        done
+    done
+}
+
+
+if [[ ! -d "$CORPUS_DIR/s001/audio_16k" ]]; then
+    echo
+    echo Converting audio from 44.1kHz to 16kHz
+    echo
+    convert_to_16khz
+fi
+
+
+
 #################
 # data/train/text
 # data/test/text
@@ -40,15 +90,6 @@ N_INDIVIDUAL_UTTERANCES_TESTING=10
 #    10/50 individual utterances go into testing
 
 
-function make_speaker_id
-{
-    printf "s%03d" "$1"
-}
-
-function make_sentence_id
-{
-    printf "%02d" "$1"
-}
 
 function clean
 {
@@ -132,7 +173,7 @@ for i in $(seq 1 $N_SPEAKERS); do
     for j in $(seq 1 $N_COMMON_UTTERANCES); do
         sentence_id=$(make_sentence_id $j)
         utterance_id="$speaker_id-$sentence_id-c"
-        wav_file="$CORPUS_DIR/$speaker_id/audio_editado/comunes/$speaker_id$sentence_id.wav"
+        wav_file="$CORPUS_DIR/$speaker_id/audio_16k/comunes/$speaker_id$sentence_id.wav"
         if [ -f "$wav_file" ]; then
             echo "$utterance_id $wav_file" >> "data/train/wav.scp"
         fi
@@ -142,7 +183,7 @@ for i in $(seq 1 $N_SPEAKERS); do
     for k in $(seq 1 $N_INDIVIDUAL_UTTERANCES_TRAINING); do
         sentence_id=$(make_sentence_id $k)
         utterance_id="$speaker_id-$sentence_id-i"
-        wav_file="$CORPUS_DIR/$speaker_id/audio_editado/individuales/$speaker_id$sentence_id.wav"
+        wav_file="$CORPUS_DIR/$speaker_id/audio_16k/individuales/$speaker_id$sentence_id.wav"
         if [ -f "$wav_file" ]; then
             echo "$utterance_id $wav_file" >> "data/train/wav.scp"
         fi
@@ -159,7 +200,7 @@ for i in $(seq 1 $N_SPEAKERS); do
     for k in $(seq $N_INDIVIDUAL_UTTERANCES_TRAINING $N_INDIVIDUAL_UTTERANCES); do
         sentence_id=$(make_sentence_id $k)
         utterance_id="$speaker_id-$sentence_id-i"
-        wav_file="$CORPUS_DIR/$speaker_id/audio_editado/individuales/$speaker_id$sentence_id.wav"
+        wav_file="$CORPUS_DIR/$speaker_id/audio_16k/individuales/$speaker_id$sentence_id.wav"
         if [ -f "$wav_file" ]; then
             echo "$utterance_id $wav_file" >> "data/test/wav.scp"
         fi
