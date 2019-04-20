@@ -55,7 +55,6 @@ function convert_to_16khz
     done
 }
 
-
 if [[ ! -d "$CORPUS_DIR/s001/audio_16k" ]]; then
     echo
     echo Converting audio from 44.1kHz to 16kHz
