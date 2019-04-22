@@ -1,6 +1,13 @@
 # Kaldi ASR example using the Spanish DIMEx100 corpus
 
-Move the `dimex100` directory into Kaldi's `egs` directory
+1. Move the `dimex100` directory into Kaldi's `egs` directory
+2. Make symbolic links for `steps` and `utils`
+
+    $ cd kaldi/egs/dimex100/s5
+    $ ln -s ../../wsj/s5/steps steps
+    $ ln -s ../../wsj/s5/utils utils
+
+3. Run `run.sh`
 
 
 # Results
