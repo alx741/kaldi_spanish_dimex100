@@ -17,3 +17,6 @@ About the DIMEx100 corpus:
     exclusively. For commercial use a formal agreement with UNAM is required.
     For more information refer to
     http://turing.iimas.unam.mx/~luis/DIME/CORPUS-DIMEX.html
+
+Example author:
+    Daniel A. Campoverde <alx@sillybytes.net>
